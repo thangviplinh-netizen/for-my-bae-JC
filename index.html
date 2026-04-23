@@ -21,6 +21,7 @@
     .container {
       padding: 20px;
       max-width: 420px;
+      animation: fadeIn 1s ease;
     }
 
     h1 {
@@ -31,15 +32,7 @@
     .emoji {
       font-size: 3rem;
       margin-bottom: 10px;
-    }
-
-    .image {
-      width: 100%;
-      max-height: 220px;
-      object-fit: cover;
-      border-radius: 15px;
-      margin-top: 15px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      animation: bounce 2s infinite;
     }
 
     .choices {
@@ -57,94 +50,123 @@
       background: #ff4d6d;
       color: white;
       cursor: pointer;
+      transition: 0.2s;
     }
+
+    button:hover { transform: scale(1.08); }
+    button:active { transform: scale(0.95); }
 
     @keyframes floatUp {
       0% { transform: translateY(0); opacity: 1; }
       100% { transform: translateY(-100vh); opacity: 0; }
     }
+
+    @keyframes glow {
+      0% { text-shadow: 0 0 5px #fff; }
+      50% { text-shadow: 0 0 20px #ff4d6d; }
+      100% { text-shadow: 0 0 5px #fff; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes bounce {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes fadeText {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .floating {
+      position: fixed;
+      font-size: 18px;
+      animation: floatUp 4s linear;
+    }
+
+    .glow { animation: glow 2s infinite; }
+
+    .final-text {
+      opacity: 0;
+      animation: fadeText 2s ease forwards;
+    }
+
+    .delay1 { animation-delay: 0.5s; }
+    .delay2 { animation-delay: 2s; }
+    .delay3 { animation-delay: 3.5s; }
   </style>
 </head>
 
 <body>
   <div class="container" id="app">
-    <div class="emoji">👨‍❤️‍👨</div>
-    <h1 id="question"></h1>
-    <img id="img" class="image" src="" />
+    <div class="emoji" id="emoji">👨‍❤️‍👨</div>
+    <h1 id="question" class="glow"></h1>
     <div class="choices" id="choices"></div>
   </div>
 
-  <!-- nhạc nền (có thể thay link) -->
-  <audio id="music" autoplay loop>
-    <source src="https://www2.cs.uic.edu/~i101/SoundFiles/StarWars60.wav" type="audio/mpeg">
+  <audio autoplay loop>
+    <source src="moonlight.mp3" type="audio/mpeg">
   </audio>
 
   <script>
     const app = document.getElementById("app");
     const question = document.getElementById("question");
     const choicesDiv = document.getElementById("choices");
-    const img = document.getElementById("img");
-
-    // ảnh bạn upload vào repo (đặt tên giống)
-    const images = [
-      "https://via.placeholder.com/400x200?text=Us+1",
-      "https://via.placeholder.com/400x200?text=Us+2",
-      "https://via.placeholder.com/400x200?text=Us+3",
-      "https://via.placeholder.com/400x200?text=Us+4",
-      "https://via.placeholder.com/400x200?text=Us+5",
-      "https://via.placeholder.com/400x200?text=Us+6",
-      "https://via.placeholder.com/400x200?text=Us+7",
-      "https://via.placeholder.com/400x200?text=Us+8",
-      "https://via.placeholder.com/400x200?text=Us+9",
-      "https://via.placeholder.com/400x200?text=Us+10"
-    ];
+    const emoji = document.getElementById("emoji");
 
     let step = 0;
 
+    const emojis = ["👨‍❤️‍👨","💑","👬","💞","💖","❤️‍🔥"];
+
     const story = [
-      { q: "Next plan of ours, mahal kita? 💖", choices: ["Go eat 🍜", "Watch movie 🎬"] },
-      { q: "What vibe today? ✨", choices: ["Chill ☕", "Exciting 🎢"] },
-      { q: "Pick a place 🌍", choices: ["Beach 🏝️", "Mountains ⛰️"] },
-      { q: "Date style? 💕", choices: ["Romantic 🍷", "Funny 😂"] },
-      { q: "What time? ⏰", choices: ["Morning 🌅", "Night 🌙"] },
-      { q: "Transport? 🚗", choices: ["Motorbike 🛵", "Car 🚘"] },
-      { q: "Food mood? 🍽️", choices: ["Street food 😋", "Fancy 🍝"] },
-      { q: "Music? 🎧", choices: ["Love songs 💕", "Chill 🎶"] },
-      { q: "Outfit? 👕", choices: ["Cute 😳", "Cool 😎"] },
-      { q: "Final choice 🥺", choices: ["You 💖", "Still you 💘"] }
+      { q: "Next plan of ours? 💖", choices: ["🍜 Go eat", "🎬 Watch movie"] },
+      { q: "What vibe today? ✨", choices: ["☕ Chill", "🎢 Exciting"] },
+      { q: "Pick a place 🌍", choices: ["🏝️ Beach", "⛰️ Mountains"] },
+      { q: "Date style? 💕", choices: ["🍷 Romantic", "😂 Funny"] },
+      { q: "What time? ⏰", choices: ["🌅 Morning", "🌙 Night"] },
+      { q: "How should we go? 🚶", choices: ["🚶 Walk together", "🛵 Ride together"] },
+      { q: "Food mood? 🍽️", choices: ["😋 Street food", "🍝 Fancy"] },
+      { q: "Music? 🎧", choices: ["💕 Love songs", "🎶 Chill"] },
+      { q: "Outfit? 👕", choices: ["😳 Cute", "😎 Cool"] },
+      { q: "Final choice 🥺", choices: ["💖 You", "💘 Still you"] },
+      { q: "Are you willing to go with me to every places in the world? 🌎", choices: ["Yes 💞", "Of course 💖"] }
     ];
 
-    function createHeart() {
-      const heart = document.createElement("div");
-      heart.innerHTML = "💖";
-      heart.style.position = "fixed";
-      heart.style.left = Math.random() * window.innerWidth + "px";
-      heart.style.top = "100%";
-      heart.style.fontSize = "20px";
-      heart.style.animation = "floatUp 3s linear";
-      document.body.appendChild(heart);
-      setTimeout(() => heart.remove(), 3000);
+    const cuteIcons = ["✨","⭐","💫","💖","🌙","🔥"];
+
+    function createFloating() {
+      const el = document.createElement("div");
+      el.className = "floating";
+      el.innerHTML = cuteIcons[Math.floor(Math.random()*cuteIcons.length)];
+      el.style.left = Math.random() * window.innerWidth + "px";
+      el.style.top = "100%";
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 4000);
     }
 
-    setInterval(createHeart, 500);
+    setInterval(createFloating, 250);
 
     function renderStep() {
       if (step >= story.length) {
         app.innerHTML = `
           <div class="emoji">👨‍❤️‍👨</div>
-          <img class="image" src="final.jpg" />
           <h1 style="font-size:1.8rem;color:#ff4d6d">
-            Anywhere is ok... 💕<br>
-            as long as with you 💖<br><br>
-            Mahal Kita! ❤️
+            <div class="final-text delay1">Anywhere is ok... 💕</div>
+            <div class="final-text delay2">as long as with you 💖</div>
+            <div class="final-text delay3">Mahal Kita! ❤️</div>
           </h1>
         `;
         return;
       }
 
       question.innerText = story[step].q;
+      emoji.innerText = emojis[Math.floor(Math.random()*emojis.length)];
+
       choicesDiv.innerHTML = "";
-      img.src = images[step];
 
       story[step].choices.forEach(choice => {
         const btn = document.createElement("button");
