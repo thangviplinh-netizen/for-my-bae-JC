@@ -20,11 +20,11 @@
 
     .container {
       padding: 20px;
-      max-width: 400px;
+      max-width: 420px;
     }
 
     h1 {
-      font-size: 1.8rem;
+      font-size: 1.6rem;
       color: #ff4d6d;
     }
 
@@ -33,26 +33,35 @@
       margin-bottom: 10px;
     }
 
+    .image {
+      width: 100%;
+      max-height: 220px;
+      object-fit: cover;
+      border-radius: 15px;
+      margin-top: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
     .choices {
-      margin-top: 30px;
+      margin-top: 20px;
       display: flex;
       flex-direction: column;
-      gap: 15px;
+      gap: 12px;
     }
 
     button {
-      padding: 15px;
-      font-size: 16px;
+      padding: 14px;
+      font-size: 15px;
       border: none;
       border-radius: 12px;
       background: #ff4d6d;
       color: white;
       cursor: pointer;
-      transition: 0.2s;
     }
 
-    button:hover {
-      transform: scale(1.05);
+    @keyframes floatUp {
+      0% { transform: translateY(0); opacity: 1; }
+      100% { transform: translateY(-100vh); opacity: 0; }
     }
   </style>
 </head>
@@ -61,34 +70,70 @@
   <div class="container" id="app">
     <div class="emoji">👨‍❤️‍👨</div>
     <h1 id="question"></h1>
+    <img id="img" class="image" src="" />
     <div class="choices" id="choices"></div>
   </div>
+
+  <!-- nhạc nền (có thể thay link) -->
+  <audio id="music" autoplay loop>
+    <source src="https://www2.cs.uic.edu/~i101/SoundFiles/StarWars60.wav" type="audio/mpeg">
+  </audio>
 
   <script>
     const app = document.getElementById("app");
     const question = document.getElementById("question");
     const choicesDiv = document.getElementById("choices");
+    const img = document.getElementById("img");
+
+    // ảnh bạn upload vào repo (đặt tên giống)
+    const images = [
+      "https://via.placeholder.com/400x200?text=Us+1",
+      "https://via.placeholder.com/400x200?text=Us+2",
+      "https://via.placeholder.com/400x200?text=Us+3",
+      "https://via.placeholder.com/400x200?text=Us+4",
+      "https://via.placeholder.com/400x200?text=Us+5",
+      "https://via.placeholder.com/400x200?text=Us+6",
+      "https://via.placeholder.com/400x200?text=Us+7",
+      "https://via.placeholder.com/400x200?text=Us+8",
+      "https://via.placeholder.com/400x200?text=Us+9",
+      "https://via.placeholder.com/400x200?text=Us+10"
+    ];
 
     let step = 0;
 
     const story = [
-      { q: "Where should we go first, JC? 💕", choices: ["Go eat 🍜", "Watch movie 🎬"] },
+      { q: "Next plan of ours, mahal kita? 💖", choices: ["Go eat 🍜", "Watch movie 🎬"] },
       { q: "What vibe today? ✨", choices: ["Chill ☕", "Exciting 🎢"] },
       { q: "Pick a place 🌍", choices: ["Beach 🏝️", "Mountains ⛰️"] },
-      { q: "Date style? 💖", choices: ["Romantic 🍷", "Funny 😂"] },
+      { q: "Date style? 💕", choices: ["Romantic 🍷", "Funny 😂"] },
       { q: "What time? ⏰", choices: ["Morning 🌅", "Night 🌙"] },
       { q: "Transport? 🚗", choices: ["Motorbike 🛵", "Car 🚘"] },
-      { q: "Food mood? 🍽️", choices: ["Street food 😋", "Fancy dinner 🍝"] },
-      { q: "Music? 🎧", choices: ["Love songs 💕", "Chill beats 🎶"] },
+      { q: "Food mood? 🍽️", choices: ["Street food 😋", "Fancy 🍝"] },
+      { q: "Music? 🎧", choices: ["Love songs 💕", "Chill 🎶"] },
       { q: "Outfit? 👕", choices: ["Cute 😳", "Cool 😎"] },
-      { q: "Final choice... 🥺", choices: ["You 💖", "Still you 💘"] }
+      { q: "Final choice 🥺", choices: ["You 💖", "Still you 💘"] }
     ];
+
+    function createHeart() {
+      const heart = document.createElement("div");
+      heart.innerHTML = "💖";
+      heart.style.position = "fixed";
+      heart.style.left = Math.random() * window.innerWidth + "px";
+      heart.style.top = "100%";
+      heart.style.fontSize = "20px";
+      heart.style.animation = "floatUp 3s linear";
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 3000);
+    }
+
+    setInterval(createHeart, 500);
 
     function renderStep() {
       if (step >= story.length) {
         app.innerHTML = `
           <div class="emoji">👨‍❤️‍👨</div>
-          <h1 style="font-size:2rem;color:#ff4d6d">
+          <img class="image" src="final.jpg" />
+          <h1 style="font-size:1.8rem;color:#ff4d6d">
             Anywhere is ok... 💕<br>
             as long as with you 💖<br><br>
             Mahal Kita! ❤️
@@ -99,6 +144,7 @@
 
       question.innerText = story[step].q;
       choicesDiv.innerHTML = "";
+      img.src = images[step];
 
       story[step].choices.forEach(choice => {
         const btn = document.createElement("button");
