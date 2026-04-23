@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Our Future 💖</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #ffd6e0, #ffe6f0);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .container {
+      padding: 20px;
+      max-width: 400px;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      color: #ff4d6d;
+    }
+
+    .emoji {
+      font-size: 3rem;
+      margin-bottom: 10px;
+    }
+
+    .choices {
+      margin-top: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    button {
+      padding: 15px;
+      font-size: 16px;
+      border: none;
+      border-radius: 12px;
+      background: #ff4d6d;
+      color: white;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container" id="app">
+    <div class="emoji">👨‍❤️‍👨</div>
+    <h1 id="question"></h1>
+    <div class="choices" id="choices"></div>
+  </div>
+
+  <script>
+    const app = document.getElementById("app");
+    const question = document.getElementById("question");
+    const choicesDiv = document.getElementById("choices");
+
+    let step = 0;
+
+    const story = [
+      { q: "Where should we go first, JC? 💕", choices: ["Go eat 🍜", "Watch movie 🎬"] },
+      { q: "What vibe today? ✨", choices: ["Chill ☕", "Exciting 🎢"] },
+      { q: "Pick a place 🌍", choices: ["Beach 🏝️", "Mountains ⛰️"] },
+      { q: "Date style? 💖", choices: ["Romantic 🍷", "Funny 😂"] },
+      { q: "What time? ⏰", choices: ["Morning 🌅", "Night 🌙"] },
+      { q: "Transport? 🚗", choices: ["Motorbike 🛵", "Car 🚘"] },
+      { q: "Food mood? 🍽️", choices: ["Street food 😋", "Fancy dinner 🍝"] },
+      { q: "Music? 🎧", choices: ["Love songs 💕", "Chill beats 🎶"] },
+      { q: "Outfit? 👕", choices: ["Cute 😳", "Cool 😎"] },
+      { q: "Final choice... 🥺", choices: ["You 💖", "Still you 💘"] }
+    ];
+
+    function renderStep() {
+      if (step >= story.length) {
+        app.innerHTML = `
+          <div class="emoji">👨‍❤️‍👨</div>
+          <h1 style="font-size:2rem;color:#ff4d6d">
+            Anywhere is ok... 💕<br>
+            as long as with you 💖<br><br>
+            Mahal Kita! ❤️
+          </h1>
+        `;
+        return;
+      }
+
+      question.innerText = story[step].q;
+      choicesDiv.innerHTML = "";
+
+      story[step].choices.forEach(choice => {
+        const btn = document.createElement("button");
+        btn.innerText = choice;
+        btn.onclick = () => {
+          step++;
+          renderStep();
+        };
+        choicesDiv.appendChild(btn);
+      });
+    }
+
+    renderStep();
+  </script>
+</body>
+</html>
